@@ -99,14 +99,38 @@ note notes[] = {
     DEF_NOTE("c5",   4186.00904481)
 };
 
+const char * linear_search(double freq, int start, int stop)
+{
+
+    if (stop < start) {
+        int tmp = start;
+        start = stop;
+        stop = tmp;
+    }
+
+    printf ("Linear search: %d - %d\n", start, stop);
+
+    int i = start, i_min=start;
+
+    double min = fabs(freq - notes[i].val);
+
+    for ( ; i<=stop; ++i) {
+        if (fabs(freq - notes[i].val) < min) {
+            i_min = i;
+            min = fabs(freq-notes[i].val);
+        }
+    }
+    return notes[i_min].name;
+}
+
 const char * get_note(double freq)
 {
 
-    const double radius = 1.5f;
-
     int start = 0;
     int stop = sizeof(notes)/sizeof(note)-1;
+
     int i = 0;
+
     printf ("freq=%f\n", freq);
 
     while (stop > start && stop - start > 2) {
@@ -114,18 +138,15 @@ const char * get_note(double freq)
         i = (stop + start) / 2;
 
         if (notes[i].val < freq ) {
-            start = i+1;
-        } else {
-            stop = i-1;
+            start = i;
+        } else if (notes[i].val > freq) {
+            stop = i;
+        } else { // exact match!?
+            return notes[i].name;
         }
 
         printf ("i=%d\n", i);
     }
 
-    if (fabs(notes[start].val - freq) < fabs(notes[stop].val - freq)) {
-        i = start;
-    } else {
-        i = stop;
-    }
-    return notes[i].name;
+    return linear_search(freq, start, stop);
 }
