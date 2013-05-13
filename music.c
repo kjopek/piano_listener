@@ -101,16 +101,31 @@ note notes[] = {
 
 const char * get_note(double freq)
 {
-    int i = 0;
-    int min_i = 0;
-    double min = DBL_MAX;
 
-    for ( i=0; i < sizeof(notes); ++i ) {
-        if (fabs(notes[i].val - freq) < min) {
-            min = fabs(notes[i].val-freq);
-            min_i = i;
+    const double radius = 1.5f;
+
+    int start = 0;
+    int stop = sizeof(notes)/sizeof(note)-1;
+    int i = 0;
+    printf ("freq=%f\n", freq);
+
+    while (stop > start && stop - start > 2) {
+
+        i = (stop + start) / 2;
+
+        if (notes[i].val < freq ) {
+            start = i+1;
+        } else {
+            stop = i-1;
         }
+
+        printf ("i=%d\n", i);
     }
 
-    return notes[min_i].name;
+    if (fabs(notes[start].val - freq) < fabs(notes[stop].val - freq)) {
+        i = start;
+    } else {
+        i = stop;
+    }
+    return notes[i].name;
 }
