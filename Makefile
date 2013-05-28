@@ -1,6 +1,8 @@
 PROG=test_fft
 SRCS=test_fft.c music.c
 
+CC=clang
+
 NO_MAN = "no"
 
 CFLAGS += -I/usr/local/include -g

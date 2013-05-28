@@ -81,15 +81,16 @@ int main(int argc, char ** argv)
         close(audio_fd);
         exit(1);
     }
-
+    
     in = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * N);
     out = (fftw_complex *) fftw_malloc(sizeof(fftw_complex) * N);
 
     for ( j=0; j<N; ++j) {
+        in[j][0] = 0.0;
         in[j][1] = 0.0;
     }
 
-    fftw_plan_with_nthreads(4);
+    fftw_plan_with_nthreads(2);
 
     plan = fftw_plan_dft_1d(N, in, out, FFTW_FORWARD, FFTW_ESTIMATE);
 
@@ -98,18 +99,20 @@ int main(int argc, char ** argv)
         if ( read(audio_fd, &audio_buffer, 1) == -1) {
             printf("Cannot read data from soundcard.\n");
         } else {
-            in[m][0] = (double) audio_buffer;
+            in[m][0] = (double) (audio_buffer-127)/255.0;
+
             if (m < N-1) {
                 ++m;
             } else {
                 for ( j=1; j < N; ++j) {
-                    in[j-1][0] = in[j][0]/(1.000032);
+                    in[j-1][0] = in[j][0]/1.000032;
                 }
             }
-            k = (k+1) % 50;
+            
+            k = (k+1) % 4;
         }
 
-        if (k==49) {
+        if (k==3) {
             fftw_execute(plan);
             max = 0;
             max_i = 0;
@@ -121,16 +124,16 @@ int main(int argc, char ** argv)
                     max_i = i;
                 }
             }
-            //fprintf(stderr, "Max: %f [Hz] = %f\n", (double) (2*max_i-1) / N * SPECTRUM + SPECT_LOW, max);
-        }
+            fprintf(stderr, "\rnote: %s (%03.5f [Hz])", get_note( (double) (2*max_i-1) / N * SPECTRUM + SPECT_LOW), (double) (2*max_i-1) / N * SPECTRUM + SPECT_LOW);
+       }
 
     }
 
 
     fftw_destroy_plan(plan);
-/*
-    fprintf(stderr, "base: %f\n", sqrt(out[0][0] * out[0][0] + out[0][1] * out[0][1]) /SPECTRUM );
 
+    fprintf(stderr, "base: %f\n", sqrt(out[0][0] * out[0][0] + out[0][1] * out[0][1]) /SPECTRUM );
+/*
     for ( i=1; i<1+N/2; ++i ) {
         double val = (2* sqrt(out[i][0] * out[i][0] +
                                   out[i][1] * out[i][1]) / N);
