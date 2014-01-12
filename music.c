@@ -121,7 +121,7 @@ const char * get_note(double freq)
         }
 
     }
-    
+
     if (stop < start) {
         tmp = start;
         start = stop;
@@ -139,6 +139,6 @@ const char * get_note(double freq)
             min = fabs(freq-notes[i].val);
         }
     }
-    
+
     return notes[i_min].name;
 }

@@ -1,5 +1,5 @@
-PROG=test_fft
-SRCS=test_fft.c music.c
+PROG=pianola
+SRCS=main.c music.c
 
 CC=clang
 

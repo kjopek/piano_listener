@@ -132,7 +132,9 @@ int main(int argc, char ** argv)
 
     fftw_destroy_plan(plan);
 
-    fprintf(stderr, "base: %f\n", sqrt(out[0][0] * out[0][0] + out[0][1] * out[0][1]) /SPECTRUM );
+    fprintf(stderr, "\nbase: %f\n", sqrt(out[0][0] * out[0][0] + 
+out[0][1] 
+* out[0][1]) /SPECTRUM );
 /*
     for ( i=1; i<1+N/2; ++i ) {
         double val = (2* sqrt(out[i][0] * out[i][0] +
